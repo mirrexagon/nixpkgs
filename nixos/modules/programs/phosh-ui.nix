@@ -60,6 +60,8 @@ in
     ];
 
     hardware.opengl.enable = mkDefault true;
+    fonts.enableDefaultFonts = mkDefault true;
+    programs.dconf.enable = mkDefault true;
   };
 
 }
