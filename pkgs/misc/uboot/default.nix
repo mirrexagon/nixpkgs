@@ -408,12 +408,27 @@ in {
       license = lib.licenses.unfreeRedistributableFirmware;
     };
     BL31="${armTrustedFirmwareRK3328}/bl31.elf";
-    filesToInstall = [ "u-boot-rockchip.bin" "u-boot.itb" "idbloader.img" ];
+    filesToInstall = [ "u-boot-rockchip.bin" "u-boot.itb" "idbloader.img" "spi-idbloader.img" ];
+    extraConfig = ''
+      # Enable U-Boot SPI support.
+      CONFIG_SPL_SPI_FLASH_SUPPORT=y
+      CONFIG_SPL_SPI_SUPPORT=y
+      CONFIG_SPL_SPI_LOAD=y
+
+      # Set U-Boot proper offset in SPI, since this doesn't seem to be set by
+      # default for the RK3328 or ROCK64.
+      # Set to the same value as the ROCKPro64.
+      CONFIG_SYS_SPI_U_BOOT_OFFS=0x60000
+
+      # Override default config to store environment in SPI flash.
+      CONFIG_ENV_IS_IN_MMC=n
+      CONFIG_ENV_IS_IN_SPI_FLASH=y
+    '';
     # Close to being blob free, but the U-Boot TPL causes random memory
     # corruption
     postBuild = ''
-      ./tools/mkimage -n rk3328 -T rksd -d ${rkbin}/rk33/rk3328_ddr_786MHz_v1.13.bin idbloader.img
-      cat spl/u-boot-spl.bin >> idbloader.img
+      ./tools/mkimage -n rk3328 -T rksd -d ${rkbin}/rk33/rk3328_ddr_786MHz_v1.13.bin:spl/u-boot-spl.bin idbloader.img
+      ./tools/mkimage -n rk3328 -T rkspi -d ${rkbin}/rk33/rk3328_ddr_786MHz_v1.13.bin:spl/u-boot-spl.bin spi-idbloader.img
     '';
   };
 
