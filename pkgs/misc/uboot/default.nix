@@ -410,11 +410,6 @@ in {
     };
     BL31="${armTrustedFirmwareRK3328}/bl31.elf";
     filesToInstall = [ "u-boot.itb" "idbloader.img"];
-    # Derive MAC address from cpuid
-    # Submitted upstream: https://patchwork.ozlabs.org/patch/1203686/
-    extraConfig = ''
-      CONFIG_MISC_INIT_R=y
-    '';
     # Close to being blob free, but the U-Boot TPL causes random memory
     # corruption
     postBuild = ''
