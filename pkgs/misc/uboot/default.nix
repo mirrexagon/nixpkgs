@@ -402,14 +402,13 @@ in {
       sha256 = "0h7xm4ck3p3380c6bqm5ixrkxwcx6z5vysqdwvfa7gcqx5d6x5zz";
     };
   in buildUBoot {
-    extraMakeFlags = [ "all" "u-boot.itb" ];
     defconfig = "rock64-rk3328_defconfig";
     extraMeta = {
       platforms = [ "aarch64-linux" ];
       license = lib.licenses.unfreeRedistributableFirmware;
     };
     BL31="${armTrustedFirmwareRK3328}/bl31.elf";
-    filesToInstall = [ "u-boot.itb" "idbloader.img"];
+    filesToInstall = [ "u-boot-rockchip.bin" "u-boot.itb" "idbloader.img" ];
     # Close to being blob free, but the U-Boot TPL causes random memory
     # corruption
     postBuild = ''
