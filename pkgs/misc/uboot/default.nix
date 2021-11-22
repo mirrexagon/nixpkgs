@@ -396,10 +396,10 @@ in {
 
   ubootRock64 = let
     rkbin = fetchFromGitHub {
-      owner = "ayufan-rock64";
+      owner = "rockchip-linux";
       repo = "rkbin";
-      rev = "f79a708978232a2b6b06c2e4173c5314559e0d3a";
-      sha256 = "0h7xm4ck3p3380c6bqm5ixrkxwcx6z5vysqdwvfa7gcqx5d6x5zz";
+      rev = "7d631e0d5b2d373b54d4533580d08fb9bd2eaad4";
+      sha256 = "sha256-jfIf5caiM7UZvN1k2YDu8wd6Oxp5t/QMzPB1ETuPfMg=";
     };
   in buildUBoot {
     extraMakeFlags = [ "all" "u-boot.itb" ];
@@ -418,7 +418,7 @@ in {
     # Close to being blob free, but the U-Boot TPL causes random memory
     # corruption
     postBuild = ''
-      ./tools/mkimage -n rk3328 -T rksd -d ${rkbin}/rk33/rk3328_ddr_786MHz_v1.13.bin idbloader.img
+      ./tools/mkimage -n rk3328 -T rksd -d ${rkbin}/bin/rk33/rk3328_ddr_333MHz_v1.17.bin idbloader.img
       cat spl/u-boot-spl.bin >> idbloader.img
     '';
   };
