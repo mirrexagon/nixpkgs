@@ -475,8 +475,8 @@ in
 
     services.stash.settings = {
       username = mkIf (cfg.username != null) cfg.username;
-      plugins_path = mkIf (!cfg.mutablePlugins) cfg.plugins;
-      scrapers_path = mkIf (!cfg.mutableScrapers) cfg.scrapers;
+      plugins_path = mkIf (!cfg.mutablePlugins && cfg.plugins != "") cfg.plugins;
+      scrapers_path = mkIf (!cfg.mutableScrapers && cfg.scrapers != "") cfg.scrapers;
     };
 
     networking.firewall.allowedTCPPorts = mkIf cfg.openFirewall [ cfg.settings.port ];
@@ -514,9 +514,13 @@ in
               install -d ${cfg.settings.generated}
               if [[ -z "${toString cfg.mutableSettings}" || ! -f ${cfg.dataDir}/config.yml ]]; then
                 env \
-                  password=$(< ${cfg.passwordFile}) \
-                  jwtSecretKeyFile=$(< ${cfg.jwtSecretKeyFile}) \
-                  sessionStoreKeyFile=$(< ${cfg.sessionStoreKeyFile}) \
+                  password=${optionalString (cfg.passwordFile != null) "$(< ${cfg.passwordFile})"} \
+                  jwtSecretKeyFile=${
+                    optionalString (cfg.jwtSecretKeyFile != null) "$(< ${cfg.jwtSecretKeyFile})"
+                  } \
+                  sessionStoreKeyFile=${
+                    optionalString (cfg.sessionStoreKeyFile != null) "$(< cfg.sessionStoreKeyFile)"
+                  } \
                   ${lib.getExe pkgs.yq-go} '
                     .jwt_secret_key = strenv(jwtSecretKeyFile) |
                     .session_store_key = strenv(sessionStoreKeyFile) |
